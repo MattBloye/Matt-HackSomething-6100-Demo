@@ -11,8 +11,8 @@ from config import LISTENER_HOST, LISTENER_PORT
 # In a real system this would be customer PII, credentials, internal files, etc.
 FAKE_RECORDS = {
     "customers": [
-        {"name": "Jane Doe", "email": "jane@example.com", "ssn": "123-45-6789"},
-        {"name": "John Roe", "email": "john@example.com", "ssn": "987-65-4321"},
+        {"name": "MITS Student1", "email": "Student1@MITS.com", "ssn": "123-45-6789"},
+        {"name": "MITS Student2", "email": "Student2@MITS.com", "ssn": "987-65-4321"},
     ]
 }
 
@@ -27,7 +27,7 @@ def lookup(query: str) -> str:
 
 
 def send_email(to: str, data: str) -> str:
-    """Send data to an external recipient. THIS is the dangerous capability.
+    """Send email tool. In a real system this would send an email to the `to` address with the `data` as the body. This is a *write* tool.
 
     It opens a network connection and ships `data` out. For the demo it always
     connects to your local listener (listener.py) regardless of `to`, so you can
