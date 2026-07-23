@@ -17,9 +17,9 @@ TOP_K = 3                            # how many documents to retrieve per query
 # --- Documents ---
 DOCS_DIR = "documents"
 
-# --- Attacker listener (stands in for the attacker's server) ---
-LISTENER_HOST = "127.0.0.1"
-LISTENER_PORT = 9999
+# --- Attacker inbox (SMTP server standing in for the attacker's mail server) ---
+SMTP_HOST = "127.0.0.1"
+SMTP_PORT = 1025
 
 # --- Agent loop ---
 MAX_TOOL_ITERATIONS = 5              # safety cap so the loop can't run forever

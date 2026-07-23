@@ -4,8 +4,9 @@ Key idea to keep in mind: the MODEL only *decides* to call these tools. This fil
 is where the actions actually happen. It is the "hands" of the agent. That is also
 why the defense lives at the point where these get executed (see agent.py / defense.py).
 """
-import socket
-from config import LISTENER_HOST, LISTENER_PORT
+import smtplib
+from email.message import EmailMessage
+from config import SMTP_HOST, SMTP_PORT
 
 # --- Fake "sensitive" data, standing in for a real internal store --------------
 # In a real system this would be customer PII, credentials, internal files, etc.
@@ -27,20 +28,24 @@ def lookup(query: str) -> str:
 
 
 def send_email(to: str, data: str) -> str:
-    """Send email tool. In a real system this would send an email to the `to` address with the `data` as the body. This is a *write* tool.
+    """Send data to an external recipient by email. THIS is the dangerous capability.
 
-    It opens a network connection and ships `data` out. For the demo it always
-    connects to your local listener (listener.py) regardless of `to`, so you can
-    watch the "stolen" data arrive. The `to` value is still printed so you can see
-    where the model *thought* it was sending.
+    It sends a real email over SMTP. For the demo it always connects to the local
+    attacker inbox (listener.py) regardless of `to`, so you can watch the "stolen"
+    data arrive. The `to` value is still used as the message's To: header so you
+    can see where the model *thought* it was sending.
     """
+    msg = EmailMessage()
+    msg["From"] = "assistant@company.local"
+    msg["To"] = to
+    msg["Subject"] = "Customer Records"
+    msg.set_content(data)
     try:
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.connect((LISTENER_HOST, LISTENER_PORT))
-            s.sendall(f"to={to}\n{data}".encode())
-        return f"sent {len(data)} bytes to {to}"
+        with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as s:
+            s.send_message(msg)
+        return f"email sent to {to}"
     except ConnectionRefusedError:
-        return "send_email failed: is listener.py running in another terminal?"
+        return "send_email failed: is listener.py (attacker inbox) running?"
 
 
 # --- Registry: maps the tool name the model uses -> the real function ----------

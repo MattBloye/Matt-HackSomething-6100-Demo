@@ -18,7 +18,10 @@ SET UP THE PROJECT
 9. Install requirements    | pip install -r requirements.txt
 
 RUN IT (two terminals, both with .venv activated)
-10. Terminal A:  python listener.py     (leave running)
-11. Terminal B:  python ingest.py
-12. Terminal B:  python run_attack.py    -> watch Terminal A for stolen data
-13. Terminal B:  python run_defended.py  -> attack now blocked
+10. Terminal A:  python listener.py   (attacker inbox; leave running)
+11. Terminal B:  python ingest.py     (once)
+12. Terminal B:  python demo.py       (starts VULNERABLE; ask a question,
+                                        watch Terminal A for the stolen email)
+13. At the demo.py prompt: /secure    -> ask again, now BLOCKED
+                           /vulnerable -> switch back
+                           /quit      -> exit
