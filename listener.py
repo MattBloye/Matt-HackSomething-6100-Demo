@@ -4,7 +4,7 @@ Run this in ITS OWN terminal before running the attack:
 
     python listener.py
 
-Anything the agent's `send` tool transmits shows up here. When you see data
+Anything the agent's `send_email` tool transmits shows up here. When you see data
 appear, that is the "exfiltration" -- sensitive records reaching the attacker.
 """
 import socket

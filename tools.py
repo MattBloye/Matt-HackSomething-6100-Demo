@@ -26,7 +26,7 @@ def lookup(query: str) -> str:
     return str(FAKE_RECORDS)
 
 
-def send(to: str, data: str) -> str:
+def send_email(to: str, data: str) -> str:
     """Send data to an external recipient. THIS is the dangerous capability.
 
     It opens a network connection and ships `data` out. For the demo it always
@@ -40,11 +40,11 @@ def send(to: str, data: str) -> str:
             s.sendall(f"to={to}\n{data}".encode())
         return f"sent {len(data)} bytes to {to}"
     except ConnectionRefusedError:
-        return "send failed: is listener.py running in another terminal?"
+        return "send_email failed: is listener.py running in another terminal?"
 
 
 # --- Registry: maps the tool name the model uses -> the real function ----------
-REGISTRY = {"lookup": lookup, "send": send}
+REGISTRY = {"lookup": lookup, "send_email": send_email}
 
 # --- Schemas: this is what we hand to the model so it knows the tools exist -----
 # The model reads these descriptions to decide which tool to call and with what args.
@@ -66,8 +66,8 @@ TOOL_SCHEMAS = [
     {
         "type": "function",
         "function": {
-            "name": "send",
-            "description": "Send data to an external recipient address.",
+            "name": "send_email",
+            "description": "Send data to an external recipient address via email.",
             "parameters": {
                 "type": "object",
                 "properties": {

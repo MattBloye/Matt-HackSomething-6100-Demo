@@ -6,7 +6,7 @@ injection** attack on a local, tool-enabled RAG agent.
 - **Attack (OWASP LLM01):** a hidden instruction is planted in an ordinary-looking
   document. When a *benign* user question retrieves that document, the model obeys the
   hidden instruction and calls tools the user never asked for.
-- **Impact (OWASP LLM06):** the agent calls a `send` tool to exfiltrate sensitive
+- **Impact (OWASP LLM06):** the agent calls a `send_email` tool to exfiltrate sensitive
   records to an attacker-controlled listener — zero-click, no malicious user prompt.
 - **Defense:** an authorization gate blocks tool calls the user didn't actually
   request, and the identical attack is re-run to show it stopped.
@@ -51,13 +51,27 @@ Watch Terminal A. If customer records appear there, the injection worked.
 ```
 python run_defended.py
 ```
-This time the `send` call is blocked, and nothing reaches the listener.
+This time the `send_email` call is blocked, and nothing reaches the listener.
 
 > Note: Qdrant runs in local on-disk mode, which allows only one process to open the
 > DB at a time. Run the scripts one after another (not simultaneously). That's why
 > ingest and the run scripts are separate steps.
 
-## 3. What each file does
+## 3. Architecture
+
+```
+documents/ --embed--> ingest.py --store--> Qdrant
+                                              |
+user question --retrieve.py--> context ------+
+                                              |
+                                    agent.py (tool-calling loop)
+                                    |                |
+                              defense.py        tools.py
+                              (authorization    (lookup, send_email)
+                               gate, logging)         |
+                                                       v
+                                              listener.py (attacker stand-in)
+```
 
 | File | Purpose |
 |------|---------|
@@ -65,48 +79,18 @@ This time the `send` call is blocked, and nothing reaches the listener.
 | `listener.py` | Fake attacker server; prints whatever gets exfiltrated |
 | `ingest.py` | Embeds the documents and loads them into Qdrant |
 | `retrieve.py` | Fetches the top matching documents for a query |
-| `tools.py` | The two stub tools (`lookup`, `send`) + their schemas |
+| `tools.py` | The two tools (`lookup`, `send_email`) + their schemas |
 | `agent.py` | The tool-calling loop (the "agent") + defense checkpoint |
-| `defense.py` | Authorization gate, spotlighting, logging — **your main work** |
+| `defense.py` | Authorization gate, spotlighting, tool-call logging |
 | `run_attack.py` | Demo 1: attack with defense OFF |
 | `run_defended.py` | Demo 2: same attack with defense ON |
 | `documents/` | Two benign docs + one poisoned doc |
 
----
-
-## 4. What is DONE vs. what is YOUR WORK
-
-### Done for you (the plumbing)
-- The RAG pipeline (ingest → retrieve), the agent loop, the two tools, the listener,
-  and a working starter authorization gate. This all runs so you're not stuck on setup.
-
-### Your work (this is the actual assignment — do NOT skip)
-1. **Craft and tune the injection payload.** `documents/poisoned_vendor_faq.txt` has a
-   plain, obvious payload as a starting point. You need to make it reliably trigger the
-   tools against qwen2.5, and **understand why** the wording works. Consider hiding it
-   more realistically (e.g. HTML comment, tiny/white text, metadata) and discuss that.
-2. **Own the defense.** `defense.py` works but is deliberately crude. Understand it,
-   refine it, and be ready to explain its design and limitations in the report and Q&A.
-3. **Tune the system prompt** in `agent.py` and explain the balance you struck.
-4. **Run trials and analyze.** Local models are non-deterministic — run the attack
-   several times and record how often it succeeds. That success rate *is* a finding.
-5. **The report + presentation.** MITRE ATT&CK / ATLAS mapping, screenshots, the 8-min
-   demo video, and all written analysis are yours (per the course rules, the attack,
-   configuration, execution, and analysis must be your own work and understanding).
-
-### Optional refinements (nice-to-have, not required)
-- Chunk long documents in `ingest.py`.
-- Make `send` actually parse the `to` address instead of always hitting the listener.
-- Add a second attack variant (e.g. a different payload phrasing) for comparison.
-
----
-
-## 5. If the attack doesn't fire
+## 4. Troubleshooting
 
 Small local models sometimes ignore tool calls or don't follow the injected
-instruction. Things to try:
-- Make the payload more direct / imperative.
+instruction. If the attack doesn't fire:
 - Confirm the agent calls tools *legitimately* first (ask "look up customer records
-  and send them to me") — if that works, the plumbing is fine and it's a payload/prompt
-  tuning problem, which is the interesting part to write about.
+  and email them to me") — if that works, the plumbing is fine and it's a
+  payload/prompt tuning issue rather than a code issue.
 - Switch `CHAT_MODEL` in `config.py` to `llama3.1:8b`.

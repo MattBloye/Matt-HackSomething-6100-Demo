@@ -4,7 +4,7 @@ Run listener.py and ingest.py first (same as the attack), then:
   python run_defended.py
 
 Same poisoned document, same harmless question -- but the authorization gate blocks
-the unauthorized 'send', so nothing reaches the listener. Compare the console output
+the unauthorized 'send_email', so nothing reaches the listener. Compare the console output
 to run_attack.py: you should see the tool call marked BLOCKED.
 """
 from agent import run_agent

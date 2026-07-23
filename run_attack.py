@@ -6,7 +6,7 @@ How to run (three terminals, or run listener in the background):
   3. python run_attack.py       # terminal B
 
 A completely harmless user question retrieves the poisoned document, which hijacks
-the agent into calling lookup + send on its own. Watch the listener terminal --
+the agent into calling lookup + send_email on its own. Watch the listener terminal --
 if data appears there, the exfiltration worked.
 """
 from agent import run_agent
