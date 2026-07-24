@@ -1,8 +1,8 @@
 """Outbound mail monitor -- watches every email the agent sends.
 
-Run this in ITS OWN terminal before running the demo:
-
-    python listener.py
+--IMPORTANT--: 
+The listener.py is only relevant for the demo to show case the exfiltration attempts or legitimate emails.
+In a real-world scenario, the attacker would have their own email address and server, and the listener.py would not be part of the system.
 
 It receives every email the agent's `send_email` tool sends and shows whether
 it was a legitimate, allow-listed delivery or exfiltration to the attacker.
@@ -16,9 +16,10 @@ from email.policy import default
 from aiosmtpd.controller import Controller
 from config import SMTP_HOST, SMTP_PORT
 
+# This line simply identifies the attacker's mailbox for the demo. In a real attack, the attacker would have their own email address and server.
 ATTACKER_ADDRESS = "stealer@unknown.com"
 
-
+# Logic to show the email content in a readable way, and to highlight whether it was exfiltration or legitimate delivery.
 class InboxHandler:
     async def handle_DATA(self, server, session, envelope):
         msg = message_from_bytes(envelope.content, policy=default)

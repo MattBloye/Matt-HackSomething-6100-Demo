@@ -1,8 +1,10 @@
 """Load every document in documents/, embed it, and store it in Qdrant.
 
-Run this once (and again whenever you change the documents):
+This is the RAG functionality of the program.
 
-    python ingest.py
+This setup allows the agent to retrieve relevant information from the documents when answering questions.
+
+This part needs to be heavily protected because the RAG embedding and storage is the source of truth for the agent's knowledge. If an attacker can modify or exfiltrate this data, they can manipulate the agent's behavior.
 """
 import os
 import ollama
@@ -35,8 +37,6 @@ def ingest():
         with open(path, "r", encoding="utf-8") as f:
             text = f.read()
         # NOTE: each file is stored as one chunk. Fine for a small demo.
-        # TODO (optional, your call): split long docs into smaller chunks for more
-        # realistic retrieval. Not required for the attack to work.
         points.append(
             PointStruct(id=i, vector=embed(text), payload={"source": fname, "text": text})
         )

@@ -9,8 +9,7 @@ PREREQUISITES (do once)
 
 SET UP THE PROJECT
 4. Unzip the project, then open the folder in VS Code
-5. Open a terminal IN that folder (VS Code: Terminal > New Terminal), or:
-      cd C:\path\to\prompt-injection-lab
+5. Open a terminal IN that folder (VS Code: Terminal > New Terminal)
 6. Create the environment   | py -3.12 -m venv .venv
 7. Activate it              | .\.venv\Scripts\Activate.ps1
       (if blocked: Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass, then retry)

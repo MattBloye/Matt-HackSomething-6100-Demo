@@ -1,7 +1,5 @@
-"""Central configuration for the prompt injection lab.
-
-Change model names, paths, and the attacker listener address here so you don't
-have to hunt through the other files.
+"""
+Configuration for the RAG agent demo.
 """
 
 # --- Ollama models ---

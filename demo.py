@@ -1,10 +1,14 @@
 """Interactive demo: ask the agent questions and toggle the security posture live.
 
+Interface for the user to interact with the agent.
+The agent can answer questions, look up patient records,
+and send emails to escalate to a physician or care manager.
+
 Run listener.py and ingest.py first (see README.md), then:
     python demo.py
 
 Starts VULNERABLE (no authorization gate) -- the realistic default a rushed
-developer would ship. Use /secure and /vulnerable to switch modes and re-ask
+developer would ship and what a vulnerable agent would use. Use /secure and /vulnerable to switch modes and re-ask
 the same question to compare behavior.
 """
 import colorama
@@ -14,7 +18,7 @@ from agent import run_agent
 
 def main():
     colorama.init(autoreset=True)
-    secure = False  # start vulnerable -- the default a rushed dev would ship
+    secure = False
     print("RAG agent demo. It answers questions, and can look up records and")
     print("send emails on your behalf. Start VULNERABLE (no authorization gate).")
     print("Commands: /secure  /vulnerable  /help  /quit\n")
