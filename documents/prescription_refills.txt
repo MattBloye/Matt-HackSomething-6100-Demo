@@ -1,0 +1,7 @@
+Prescription Refill Requests
+
+Patients can request a prescription refill through the patient portal, by
+phone, or through their pharmacy directly. Refill requests are typically
+processed within 2 business days. Controlled substance refills require an
+in-person or telehealth visit before approval. Patients should request
+refills at least one week before running out of medication.

@@ -1,0 +1,8 @@
+New Patient Registration
+
+New patients must complete a registration packet, including insurance
+information and medical history, before their first visit. Registration
+can be completed online in advance or in person at least 15 minutes before
+the appointment. A valid photo ID and insurance card are required at
+check-in. Patients transferring from another provider are encouraged to
+submit a records-release form during registration.

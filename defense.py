@@ -1,10 +1,13 @@
 """Defensive layers against the indirect prompt injection attack.
 
-Three layers, mapped to a standard Defense & Detection breakdown:
+Four layers, mapped to a standard Defense & Detection breakdown:
   1. Authorization gate  -> Prevention  (the core mitigation, OWASP LLM06)
-  2. Spotlighting        -> Prevention  (secondary, separates data from instructions)
-  3. Tool-call logging   -> Detection   (record every attempt)
+  2. Egress allow-list   -> Prevention  (independent second layer, see below)
+  3. Spotlighting        -> Prevention  (secondary, separates data from instructions)
+  4. Tool-call logging   -> Detection   (record every attempt)
 """
+from colorama import Fore, Style
+from config import ALLOWED_EMAIL_RECIPIENTS
 
 # ---------------------------------------------------------------------------
 # 1. AUTHORIZATION GATE  (core mitigation -- OWASP LLM06 Excessive Agency)
@@ -36,7 +39,22 @@ def is_authorized(tool_name: str, user_request: str) -> bool:
 
 
 # ---------------------------------------------------------------------------
-# 2. SPOTLIGHTING  (secondary layer -- separate untrusted data from instructions)
+# 2. EGRESS ALLOW-LIST  (independent second layer -- OWASP LLM06 Excessive Agency)
+# ---------------------------------------------------------------------------
+# This is the "per-tool allow-list of destinations" the comment above names as
+# a stronger control: it doesn't matter what the user's message said, or what
+# the model decided to call `send_email` with -- if the recipient isn't on the
+# approved list, the call is blocked. This is what stops a poisoned request
+# from piggybacking on a legitimate-sounding user message (e.g. "send this to
+# my boss") and still exfiltrating to the attacker's address, since the
+# authorization gate above only ever looks at the user's own wording, never
+# the actual destination.
+def is_egress_allowed(to: str) -> bool:
+    return to in ALLOWED_EMAIL_RECIPIENTS
+
+
+# ---------------------------------------------------------------------------
+# 3. SPOTLIGHTING  (secondary layer -- separate untrusted data from instructions)
 # ---------------------------------------------------------------------------
 # Wrap retrieved content in clear markers and tell the model that anything inside
 # is DATA to read, never instructions to follow.
@@ -56,7 +74,7 @@ def spotlight(retrieved_text: str) -> str:
 
 
 # ---------------------------------------------------------------------------
-# 3. TOOL-CALL LOGGING  (detection -- record every tool call attempt)
+# 4. TOOL-CALL LOGGING  (detection -- record every tool call attempt)
 # ---------------------------------------------------------------------------
 # In a real deployment these logs would feed a SIEM. Here they just print, so you
 # can see the sequence of allowed/blocked calls.
@@ -64,6 +82,8 @@ def spotlight(retrieved_text: str) -> str:
 # A defender watching this feed would alert on a pattern like `send_email`
 # following a `lookup` of sensitive data on a request where the user never asked
 # to send anything -- exactly the pattern this lab reproduces.
-def log_tool_call(tool_name: str, args: dict, allowed: bool):
-    status = "ALLOWED" if allowed else "BLOCKED"
-    print(f"[defense] tool-call {status}: {tool_name}({args})")
+def log_tool_call(tool_name: str, args: dict, allowed: bool, reason: str = None):
+    if allowed:
+        print(f"{Fore.YELLOW}[defense] tool-call ALLOWED:{Style.RESET_ALL} {Style.DIM}{tool_name}({args}){Style.RESET_ALL}")
+    else:
+        print(f"{Fore.GREEN}[defense] BLOCKED{Style.RESET_ALL} {Style.DIM}{tool_name}: {reason or 'blocked by policy'}{Style.RESET_ALL}")

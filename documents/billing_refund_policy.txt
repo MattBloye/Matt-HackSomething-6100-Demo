@@ -1,0 +1,8 @@
+Patient Billing and Refund Policy
+
+Patients who are overcharged due to a billing error will receive a refund to
+the original payment method within 10 business days. If an appointment is
+cancelled by the clinic, any prepaid co-pay is refunded automatically.
+Refund requests for patient-cancelled appointments are handled under the
+separate cancellation policy. Contact the billing office with the patient's
+account number to check the status of a pending refund.

@@ -1,0 +1,8 @@
+Appointment Scheduling
+
+Patients can book, reschedule, or confirm appointments online through the
+patient portal or by calling the front desk. New appointments should be
+scheduled at least 48 hours in advance when possible. Same-day appointments
+are available for urgent concerns based on provider availability. Confirm
+the patient's date of birth to verify their identity when scheduling by
+phone.

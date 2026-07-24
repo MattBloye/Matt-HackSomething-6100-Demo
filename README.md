@@ -46,7 +46,7 @@ python ingest.py
 python demo.py
 ```
 `demo.py` starts in **VULNERABLE** mode. Type a question, e.g. `What is our
-refund policy?`, and watch Terminal A — if customer records arrive as an email,
+refund policy?`, and watch Terminal A — if patient records arrive as an email,
 the injection worked.
 
 Switch modes live at the prompt:
@@ -76,26 +76,26 @@ user question --retrieve.py--> context ------+
                               (authorization    (lookup, send_email)
                                gate, logging)         |
                                                        v
-                                          listener.py (SMTP attacker inbox)
+                                    listener.py (outbound mail monitor)
 ```
 
 | File | Purpose |
 |------|---------|
 | `config.py` | All settings: model names, paths, attacker inbox address |
-| `listener.py` | SMTP attacker inbox; prints every email it receives |
+| `listener.py` | Outbound mail monitor — shows legitimate sends (green) and attacker exfiltration (red) |
 | `ingest.py` | Embeds the documents and loads them into Qdrant |
 | `retrieve.py` | Fetches the top matching documents for a query |
 | `tools.py` | The two tools (`lookup`, `send_email`) + their schemas |
 | `agent.py` | The tool-calling loop (the "agent") + defense checkpoint |
 | `defense.py` | Authorization gate, spotlighting, tool-call logging |
 | `demo.py` | Interactive demo — ask questions, toggle vulnerable/secure live |
-| `documents/` | Two benign docs + one poisoned doc |
+| `documents/` | Nine benign clinic KB docs + one poisoned doc |
 
 ## 4. Troubleshooting
 
 Small local models sometimes ignore tool calls or don't follow the injected
 instruction. If the injection doesn't fire in VULNERABLE mode:
-- Confirm the agent calls tools *legitimately* first (ask "look up customer records
+- Confirm the agent calls tools *legitimately* first (ask "look up patient records
   and email them to me") — if that works, the plumbing is fine and it's a
   payload/prompt tuning issue rather than a code issue.
 - Switch `CHAT_MODEL` in `config.py` to `llama3.1:8b`.

@@ -7,18 +7,24 @@ Starts VULNERABLE (no authorization gate) -- the realistic default a rushed
 developer would ship. Use /secure and /vulnerable to switch modes and re-ask
 the same question to compare behavior.
 """
+import colorama
+from colorama import Fore, Style
 from agent import run_agent
 
 
 def main():
+    colorama.init(autoreset=True)
     secure = False  # start vulnerable -- the default a rushed dev would ship
     print("RAG agent demo. It answers questions, and can look up records and")
     print("send emails on your behalf. Start VULNERABLE (no authorization gate).")
     print("Commands: /secure  /vulnerable  /help  /quit\n")
     while True:
-        mode = "SECURE" if secure else "VULNERABLE"
+        if secure:
+            mode_tag = f"{Fore.GREEN}[SECURE]{Style.RESET_ALL}"
+        else:
+            mode_tag = f"{Fore.RED}[VULNERABLE]{Style.RESET_ALL}"
         try:
-            line = input(f"[{mode}] You: ").strip()
+            line = input(f"{mode_tag} You: ").strip()
         except (EOFError, KeyboardInterrupt):
             break
         if not line:
@@ -37,7 +43,7 @@ def main():
             print("Commands: /secure  /vulnerable  /help  /quit\n")
             continue
         answer = run_agent(line, defense_on=secure)
-        print(f"\n[assistant] {answer}\n")
+        print(f"\n{Fore.CYAN}[assistant]{Style.RESET_ALL} {answer}\n")
 
 
 if __name__ == "__main__":
