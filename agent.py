@@ -88,7 +88,7 @@ def run_agent(user_question: str, defense_on: bool = False) -> str:
                 result = f"BLOCKED by policy: {block_reason}"
             elif name in REGISTRY:
                 try:
-                    result = REGISTRY[name](**args)   # <-- the harness ACTS here
+                    result = REGISTRY[name](**args)   # <-- tool executes; `allowed` was decided above at the defense checkpoint
                 except Exception as e:
                     result = f"tool call failed: {e}"
                 if not defense_on:

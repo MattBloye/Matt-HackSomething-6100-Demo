@@ -1,15 +1,12 @@
-"""Interactive demo: ask the agent questions and toggle the security posture live.
-
-Interface for the user to interact with the agent.
-The agent can answer questions, look up patient records,
-and send emails to escalate to a physician or care manager.
+"""Interactive CLI for the demo: type questions, the agent answers them, and
+/secure and /vulnerable toggle the authorization gate live so you can re-ask
+the same question and compare behavior side by side.
 
 Run listener.py and ingest.py first (see README.md), then:
     python demo.py
 
-Starts VULNERABLE (no authorization gate) -- the realistic default a rushed
-developer would ship and what a vulnerable agent would use. Use /secure and /vulnerable to switch modes and re-ask
-the same question to compare behavior.
+Starts VULNERABLE (gate off) -- the realistic default a rushed team would
+ship without thinking about it.
 """
 import colorama
 from colorama import Fore, Style

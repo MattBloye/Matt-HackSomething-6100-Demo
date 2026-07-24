@@ -1,10 +1,9 @@
-"""Load every document in documents/, embed it, and store it in Qdrant.
-
-This is the RAG functionality of the program.
-
-This setup allows the agent to retrieve relevant information from the documents when answering questions.
-
-This part needs to be heavily protected because the RAG embedding and storage is the source of truth for the agent's knowledge. If an attacker can modify or exfiltrate this data, they can manipulate the agent's behavior.
+"""Embeds every document in documents/ and stores the vectors in Qdrant --
+this is what retrieve.py searches at query time, so it's the pipeline's
+source of truth for what the agent "knows." It's also the attack surface for
+this demo: the poisoned document with the injected instruction lives in
+documents/ alongside the legitimate clinic policies, and gets embedded here
+exactly like any other file.
 """
 import os
 import ollama

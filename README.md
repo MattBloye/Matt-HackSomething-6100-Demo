@@ -8,8 +8,13 @@ states: **vulnerable** to indirect prompt injection, and **secure** against it.
   document, the model obeys the hidden instruction and calls `send_email` to
   exfiltrate sensitive records to an attacker-controlled inbox — zero-click, no
   malicious user prompt.
-- **Secure state:** an authorization gate blocks tool calls the user didn't
-  actually request; the identical scenario is re-run to show it's stopped.
+- **Secure state:** two independent layers gate `send_email`: (1) an
+  **authorization gate** — was a send actually requested by the user? — and
+  (2) an **egress allow-list** — is the recipient an approved internal
+  address? Either layer failing blocks the call, so exfiltration is stopped
+  even if a send genuinely was requested (e.g. a poisoned "send this to my
+  boss"). Re-ask the same question after switching to secure and watch it
+  get blocked.
 
 Real-world anchor: **EchoLeak / CVE-2025-32711** (Microsoft 365 Copilot).
 
@@ -51,8 +56,8 @@ the injection worked.
 
 Switch modes live at the prompt:
 ```
-/secure       switch to SECURE mode (authorization gate ON)
-/vulnerable   switch back to VULNERABLE mode (authorization gate OFF)
+/secure       switch to SECURE mode (authorization gate + egress allow-list ON)
+/vulnerable   switch back to VULNERABLE mode (both defenses OFF)
 /help         list commands
 /quit         exit
 ```
@@ -74,9 +79,9 @@ user question --retrieve.py--> context ------+
                                     |                |
                               defense.py        tools.py
                               (authorization    (lookup, send_email)
-                               gate, logging)         |
-                                                       v
-                                    listener.py (outbound mail monitor)
+                               gate, egress           |
+                               allow-list,             v
+                               logging)         listener.py (outbound mail monitor)
 ```
 
 | File | Purpose |
@@ -87,7 +92,7 @@ user question --retrieve.py--> context ------+
 | `retrieve.py` | Fetches the top matching documents for a query |
 | `tools.py` | The two tools (`lookup`, `send_email`) + their schemas |
 | `agent.py` | The tool-calling loop (the "agent") + defense checkpoint |
-| `defense.py` | Authorization gate, spotlighting, tool-call logging |
+| `defense.py` | Authorization gate, egress allow-list, spotlighting, tool-call logging |
 | `demo.py` | Interactive demo — ask questions, toggle vulnerable/secure live |
 | `documents/` | Nine benign clinic KB docs + one poisoned doc |
 

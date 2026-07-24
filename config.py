@@ -1,5 +1,7 @@
-"""
-Configuration for the RAG agent demo.
+"""Central tunables for the RAG agent demo, imported by every other module
+(retrieve.py, tools.py, agent.py, defense.py, listener.py, ingest.py). Nothing
+here is security-relevant except ALLOWED_EMAIL_RECIPIENTS, which defense.py
+enforces as the egress allow-list.
 """
 
 # --- Ollama models ---
@@ -8,14 +10,14 @@ EMBED_MODEL = "nomic-embed-text"     # produces 768-dim vectors
 
 # --- Qdrant (runs locally, on disk -- no Docker needed) ---
 QDRANT_PATH = "./qdrant_data"        # folder where the vector DB is stored
-COLLECTION = "lab_docs"
+COLLECTION = "lab_docs"              # Qdrant collection holding the ingested clinic policy documents
 VECTOR_SIZE = 768                    # must match EMBED_MODEL's output size
 TOP_K = 2                            # how many documents to retrieve per query
 
 # --- Documents ---
 DOCS_DIR = "documents"
 
-# --- Attacker inbox (SMTP server standing in for the attacker's mail server) ---
+# --- Local mail server standing in for the outside world: catches every outbound email (legitimate and exfiltrated) so listener.py can show which is which ---
 SMTP_HOST = "127.0.0.1"
 SMTP_PORT = 1025
 

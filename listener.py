@@ -1,11 +1,10 @@
-"""Outbound mail monitor -- watches every email the agent sends.
+"""Outbound mail monitor standing in for "the outside world" -- receives every
+email the agent's send_email tool sends and labels each one as either a
+legitimate, allow-listed delivery or exfiltration to the attacker.
 
---IMPORTANT--: 
-The listener.py is only relevant for the demo to show case the exfiltration attempts or legitimate emails.
-In a real-world scenario, the attacker would have their own email address and server, and the listener.py would not be part of the system.
-
-It receives every email the agent's `send_email` tool sends and shows whether
-it was a legitimate, allow-listed delivery or exfiltration to the attacker.
+Only exists for the demo, so you can watch delivery happen live. In a real
+attack the attacker would run their own mail server elsewhere; there'd be no
+listener.py to catch or label anything.
 """
 import time
 import colorama
@@ -16,11 +15,11 @@ from email.policy import default
 from aiosmtpd.controller import Controller
 from config import SMTP_HOST, SMTP_PORT
 
-# This line simply identifies the attacker's mailbox for the demo. In a real attack, the attacker would have their own email address and server.
-ATTACKER_ADDRESS = "stealer@unknown.com"
+ATTACKER_ADDRESS = "stealer@unknown.com"   # the address the poisoned document tries to exfiltrate to
 
-# Logic to show the email content in a readable way, and to highlight whether it was exfiltration or legitimate delivery.
+
 class InboxHandler:
+    """Prints each received email, tagged red (exfiltration) or green (legitimate) by recipient."""
     async def handle_DATA(self, server, session, envelope):
         msg = message_from_bytes(envelope.content, policy=default)
         timestamp = datetime.now().strftime("%H:%M:%S")
