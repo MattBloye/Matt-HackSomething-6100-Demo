@@ -17,10 +17,14 @@ SET UP THE PROJECT
 9. Install requirements    | pip install -r requirements.txt
 
 RUN IT (two terminals, both with .venv activated)
-10. Terminal A:  python listener.py   (attacker inbox; leave running)
-11. Terminal B:  python ingest.py     (once)
-12. Terminal B:  python demo.py       (starts VULNERABLE; ask a question,
-                                        watch Terminal A for the stolen email)
-13. At the demo.py prompt: /secure    -> ask again, now BLOCKED
+10. Terminal A:  python listener.py            (attacker inbox; leave running)
+11. Terminal B:  python ingest.py              (once)
+12. Terminal B:  python submit_intake_form.py  (interactive -- prompts you for intake
+                                                 fields; the "Reason for Visit" free-text
+                                                 field is where the injected instruction
+                                                 goes)
+13. Terminal B:  python demo.py                (starts VULNERABLE; ask a question,
+                                                 watch Terminal A for the stolen email)
+14. At the demo.py prompt: /secure    -> ask again, now BLOCKED
                            /vulnerable -> switch back
                            /quit      -> exit

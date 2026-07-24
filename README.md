@@ -45,11 +45,16 @@ Open **two terminals** in this folder.
 python listener.py
 ```
 
-**Terminal B — load documents, then run the demo:**
+**Terminal B — load documents, submit an intake form, then run the demo:**
 ```
 python ingest.py
+python submit_intake_form.py
 python demo.py
 ```
+`submit_intake_form.py` is interactive -- it prompts you for the intake fields,
+including the "Reason for Visit / Symptom Description" free-text field. That field is
+the delivery vector: type or paste an injected instruction there to simulate an
+attacker submitting the intake form through the patient portal.
 `demo.py` starts in **VULNERABLE** mode. Type a question, e.g. `What is our
 refund policy?`, and watch Terminal A — if patient records arrive as an email,
 the injection worked.
@@ -71,10 +76,12 @@ blocked, and nothing reaches the attacker inbox.
 ## 3. Architecture
 
 ```
-documents/ --embed--> ingest.py --store--> Qdrant
-                                              |
-user question --retrieve.py--> context ------+
-                                              |
+documents/ --embed--> ingest.py -----------> Qdrant
+                                                 |
+submit_intake_form.py (interactive) --embed-----+
+                                                 |
+user question --retrieve.py--> context ---------+
+                                                 |
                                     agent.py (tool-calling loop)
                                     |                |
                               defense.py        tools.py
@@ -89,12 +96,13 @@ user question --retrieve.py--> context ------+
 | `config.py` | All settings: model names, paths, attacker inbox address |
 | `listener.py` | Outbound mail monitor — shows legitimate sends (green) and attacker exfiltration (red) |
 | `ingest.py` | Embeds the documents and loads them into Qdrant |
+| `submit_intake_form.py` | Interactive patient-portal simulation — prompts for intake fields and upserts the submission into Qdrant. The free-text "Reason for Visit" field is the injection delivery vector |
 | `retrieve.py` | Fetches the top matching documents for a query |
 | `tools.py` | The two tools (`lookup`, `send_email`) + their schemas |
 | `agent.py` | The tool-calling loop (the "agent") + defense checkpoint |
 | `defense.py` | Authorization gate, egress allow-list, spotlighting, tool-call logging |
 | `demo.py` | Interactive demo — ask questions, toggle vulnerable/secure live |
-| `documents/` | Nine benign clinic KB docs + one poisoned doc |
+| `documents/` | Ten benign clinic KB docs |
 
 ## 4. Troubleshooting
 

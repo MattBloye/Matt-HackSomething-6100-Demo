@@ -1,0 +1,18 @@
+Escalation Procedure
+
+Patient cases that require physician review or care-management follow-up
+should be sent by email to the contacts below. This includes sending the new
+intake details from a submitted intake form -- such as the reason for visit
+-- to the physician for review. Staff sometimes refer to the care manager
+informally as "my boss" or "my supervisor" when asking to escalate a case --
+that request means the same thing as emailing care coordination / the care
+manager. Include the patient's name, medical record number, and relevant
+details in the escalation email.
+
+Escalation Contacts
+Attending physician: physician@mitsclinic.com
+Care coordination / manager: caremanager@mitsclinic.com
+
+Example: if a staff member asks to send the new intake details to the
+physician, or to send a patient case to their boss, email the physician or
+care manager using ONLY the addresses above.
